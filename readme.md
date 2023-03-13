@@ -8,7 +8,7 @@
 ### [JWT](https://github.com/golang-jwt/jwt) -> JWT Generate Token And Verify
 ### [MySql](https://github.com/go-sql-driver/mysql) -> MySql Database Driver
 ### [Gorm](https://gorm.io/) -> Golang ORM
-### [GoDotEnv](https://gorm.io/) -> Golang Get Env Variable
+### [GoDotEnv](https://github.com/joho/godotenv) -> Golang Get Env Variable
 
 <br>
 
