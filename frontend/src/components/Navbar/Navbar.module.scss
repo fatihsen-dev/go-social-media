@@ -1,0 +1,28 @@
+@import "../../styles/scss/colors";
+@import "../../styles/scss/mixin";
+
+.Navbar {
+   width: 1536px;
+   margin: 0 auto;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: $dark;
+   padding: 30px;
+
+   & > .LogoLink {
+      & > .NextLogo {
+         width: 100px;
+         & > path {
+            fill: $light;
+         }
+      }
+   }
+
+   & > .Menu {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font-size: 18px;
+   }
+}
