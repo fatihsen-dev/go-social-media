@@ -1,0 +1,13 @@
+@import "colors";
+@import "reset";
+@import "mixin";
+
+#__next {
+   background-color: $dark;
+   color: $light;
+   display: flex;
+   flex-direction: column;
+}
+a {
+   color: $light;
+}
