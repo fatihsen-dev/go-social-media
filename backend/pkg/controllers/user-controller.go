@@ -106,19 +106,6 @@ func Login(c *gin.Context) {
 
   var findUser User
   if result := config.GetDB().Where("email = ?", input.Email).First(&findUser); result.Error == nil {
-      selectedData := struct {
-          ID    uint          `json:"id"`
-          Name  string        `json:"name"`
-          Email string        `json:"email"`
-          Token string        `json:"token"`
-          CreatedAt time.Time `json:"created_at"`
-      }{
-          ID:    findUser.ID,
-          Name:  findUser.Name,
-          Email: findUser.Email,
-          Token: findUser.Token,
-          CreatedAt: findUser.CreatedAt,
-      }
       if findUser.Password == input.Password {
         token := utils.GenerateJWTData{ID: findUser.ID,Email: findUser.Email}
         tokenString, err := utils.GenerateJWT(token)
@@ -128,7 +115,22 @@ func Login(c *gin.Context) {
         }
         findUser.Token = tokenString
         config.GetDB().Save(&findUser)
-        c.JSON(http.StatusOK, selectedData)
+        if result := config.GetDB().Where("email = ?", input.Email).First(&findUser); result.Error == nil{
+            selectedData := struct {
+                ID    uint          `json:"id"`
+                Name  string        `json:"name"`
+                Email string        `json:"email"`
+                Token string        `json:"token"`
+                CreatedAt time.Time `json:"created_at"`
+            }{
+                ID:    findUser.ID,
+                Name:  findUser.Name,
+                Email: findUser.Email,
+                Token: findUser.Token,
+                CreatedAt: findUser.CreatedAt,
+            }
+            c.JSON(http.StatusOK, selectedData)
+        }
       }else{
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Password wrong"})
       }
