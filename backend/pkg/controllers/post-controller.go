@@ -9,12 +9,19 @@ import (
 	"github.com/fatihsen-dev/go-fullstack-social-media/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/jinzhu/gorm"
 )
 
 func GetPosts(c *gin.Context) {
 	var posts []models.Post
-	// config.GetDB().Select([]string{"id", "title", "subtitle", "description", "owner", "created_at"}).Find(&posts)
-	config.GetDB().Find(&posts)
+	err := config.GetDB().Preload("User", func(db *gorm.DB) *gorm.DB {
+    	return db.Select("id, name, email, created_at")
+	}).Find(&posts).Error
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	c.JSON(http.StatusOK, posts)
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -152,24 +159,22 @@ func DeletePost(c *gin.Context){
 		return
 	}
 
-	type Post struct {
-		Id             	uint       `json:"id"`
-		Title             string     `json:"title"`
-		Subtitle          string     `json:"subtitle"`
-		Description       string     `json:"description"`
-	}
 
-	var input Post
-	var dbPost models.Post
-	if result := config.GetDB().Where("id = ?", id).First(&dbPost); result.Error == nil {
-		if dbPost.Owner == userId {
-			result := config.GetDB().Where("id = ?", id).Delete(&input);
+	y, ok := userId.(float64)
+	if ok {
+		var post models.Post
+	if result := config.GetDB().Where("id = ?", id).First(&post); result.Error == nil {
+		if post.Owner == uint(y) {
+			result := config.GetDB().Where("id = ?", id).Delete(&post);
 			c.JSON(http.StatusOK, result.Value)
 			return
-		}else{
-			c.JSON(http.StatusUnauthorized, gin.H{"error":"You are not post owner"})
-			return
+			}else{
+				c.JSON(http.StatusUnauthorized, gin.H{"error":"You are not post owner"})
+				return
+			}
 		}
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Post not found"})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Post delete error"})
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"error":"Post not found"})
 }
