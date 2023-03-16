@@ -1,7 +1,5 @@
 # Golang FullStack social media app project
 
-<br><br>
-
 ## Backend (Golang)
 ### [Gin](https://github.com/gin-gonic/gin) -> Golang Web Framework
 ### [Validator](https://github.com/go-playground/validator) -> Golang Struct Validator
