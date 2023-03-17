@@ -117,11 +117,11 @@ func Login(c *gin.Context) {
         config.GetDB().Save(&findUser)
         if result := config.GetDB().Where("email = ?", input.Email).First(&findUser); result.Error == nil{
             selectedData := struct {
-                ID    uint          `json:"id"`
-                Name  string        `json:"name"`
-                Email string        `json:"email"`
-                Token string        `json:"token"`
-                CreatedAt time.Time `json:"created_at"`
+                ID          uint            `json:"id"`
+                Name        string          `json:"name"`
+                Email       string          `json:"email"`
+                Token       string          `json:"token"`
+                CreatedAt   time.Time       `json:"created_at"`
             }{
                 ID:    findUser.ID,
                 Name:  findUser.Name,
@@ -138,4 +138,31 @@ func Login(c *gin.Context) {
   } else {
       c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
   }
+}
+
+func Control(c *gin.Context) {
+  type User struct {
+    ID             uint       `json:"id"`
+    Name           string     `json:"name"`
+    Email          string     `json:"email"`
+    Token          string     `json:"token"`
+    CreatedAt      time.Time  `json:"created_at"`
+  }
+
+
+  id, exists := c.Get("id")
+	if !exists {
+		return
+	}
+
+  var user User
+
+  y, ok := id.(float64)
+	if ok {
+		config.GetDB().First(&user, "id = ?", y)
+
+    c.JSON(http.StatusOK, user)
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Post create error"})
+	}
 }
