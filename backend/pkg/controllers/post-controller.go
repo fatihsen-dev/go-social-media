@@ -18,10 +18,9 @@ func GetPosts(c *gin.Context) {
     	return db.Select("id, name, email, created_at")
 	}).Find(&posts).Error
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		c.JSON(http.StatusNotFound, gin.H{"error": "Posts not found"})
 		return
 	}
-	c.JSON(http.StatusOK, posts)
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -62,6 +61,14 @@ func CreatePost(c *gin.Context) {
 	if ok {
 		post := models.Post{Title: input.Title, Subtitle: input.Subtitle, Description: input.Description,Owner: uint(y)}
 		config.GetDB().Create(&post)
+
+		err2 := config.GetDB().Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Where("id = ?", id)
+		}).First(&post).Error
+		if err2 != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Posts not found"})
+			return
+		}
 		c.JSON(http.StatusOK, post)
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error":"Post create error"})
@@ -77,20 +84,16 @@ func GetOnePost(c *gin.Context){
 		return
 	}
 
-	type Post struct {
-		Id             	uint       `json:"id"`
-		Title             string     `json:"title"`
-		Subtitle          string     `json:"subtitle"`
-		Description       string     `json:"description"`
-	}
+	var input models.Post
 
-	var input Post
-
-	if result := config.GetDB().Where("id = ?", id).First(&input); result.Error == nil {
-		c.JSON(http.StatusOK, result.Value)
+	err2 := config.GetDB().Preload("User", func(db *gorm.DB) *gorm.DB {
+    	return db.Where("id = ?", id)
+	}).First(&input).Error
+	if err2 != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Posts not found"})
 		return
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"error":"Post not found"})
+	c.JSON(http.StatusOK, input)
 }
 
 func UpdatePost(c *gin.Context){
