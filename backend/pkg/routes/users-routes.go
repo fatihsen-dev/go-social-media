@@ -9,5 +9,5 @@ import (
 func UsersRouter(usersRouter *gin.RouterGroup) {
 	usersRouter.POST("/register", controllers.Register)
 	usersRouter.POST("/login", controllers.Login)
-	usersRouter.POST("/control",middlewares.AuthMiddleware(), controllers.Control)
+	usersRouter.GET("/control",middlewares.AuthMiddleware(), controllers.Control)
 }

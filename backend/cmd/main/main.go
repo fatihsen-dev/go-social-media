@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/fatihsen-dev/go-fullstack-social-media/pkg/routes"
 	"github.com/fatihsen-dev/go-fullstack-social-media/pkg/utils"
@@ -16,10 +17,15 @@ func main(){
 	//? create gin router
 	router := gin.Default()
 
-	//? allow cors
-	config := cors.DefaultConfig()
-   config.AllowOrigins = []string{"*"}
-   router.Use(cors.New(config))
+	//? cors allow
+ 	router.Use(cors.New(cors.Config{
+    AllowOrigins:     []string{"*"},
+    AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+    AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+    ExposeHeaders:    []string{"Content-Length"},
+    AllowCredentials: true,
+    MaxAge:           12 * time.Hour,
+  }))
 
 	//? Routers
 	mainRouter := router.Group("/api")

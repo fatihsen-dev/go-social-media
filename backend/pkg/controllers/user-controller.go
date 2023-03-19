@@ -15,8 +15,8 @@ import (
 func Register(c *gin.Context) {
   type User struct {
     Name           string     `validate:"required,min=4,max=18"`
-    Email          string     `validate:"required,email"`
-    Password       string     `validate:"required,min=6"`
+    Email          string     `validate:"required,email,min=8,max=120"`
+    Password       string     `validate:"required,min=6,max=36"`
   }
 
 	var input User
