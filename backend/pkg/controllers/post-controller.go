@@ -84,16 +84,13 @@ func GetOnePost(c *gin.Context){
 		return
 	}
 
-	var input models.Post
-
-	err2 := config.GetDB().Preload("User", func(db *gorm.DB) *gorm.DB {
-    	return db.Where("id = ?", id)
-	}).First(&input).Error
+	var post models.Post
+	err2  := config.GetDB().Preload("User").Where("id = ?", id).First(&post).Error
 	if err2 != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Posts not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
 		return
 	}
-	c.JSON(http.StatusOK, input)
+	c.JSON(http.StatusOK, post)
 }
 
 func UpdatePost(c *gin.Context){
