@@ -1,8 +1,31 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Head from "next/head";
 import styles from "./Profile.module.scss";
+import { useAppDispatch, useAppSelector } from "@/stores/hooks";
+import { login } from "@/stores/auth/authSlice";
+import { useRouter } from "next/router";
 
-const Post = () => {
+const Profile = () => {
+   const { user } = useAppSelector((state) => state.auth);
+   const dispatch = useAppDispatch();
+   const router = useRouter();
+   const today = new Date(user.created_at);
+
+   const logoutHandle = () => {
+      localStorage.removeItem("token");
+      dispatch(
+         login({
+            status: false,
+            id: 0,
+            name: "",
+            email: "",
+            token: "",
+            created_at: "",
+         })
+      );
+      router.push("/login");
+   };
+
    return (
       <>
          <Head>
@@ -12,9 +35,25 @@ const Post = () => {
             <link rel='icon' href='/favicon.ico' />
          </Head>
          <Navbar />
-         <div className={styles.Container}>Profile Page</div>
+         <div className={styles.Container}>
+            <div>
+               <div>
+                  ID: <span>{user.id}</span>
+               </div>
+               <div>
+                  NAME: <span>{user.name}</span>
+               </div>
+               <div>
+                  EMAIL: <span>{user.email}</span>
+               </div>
+               <div>
+                  JOINED: <span>{today.toLocaleDateString("en-US")}</span>
+               </div>
+               <button onClick={logoutHandle}>Logout</button>
+            </div>
+         </div>
       </>
    );
 };
 
-export default Post;
+export default Profile;
