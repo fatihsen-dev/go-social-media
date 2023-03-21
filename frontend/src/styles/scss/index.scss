@@ -7,6 +7,7 @@
    color: $light;
    display: flex;
    flex-direction: column;
+   overflow: auto;
 }
 a {
    color: $light;
