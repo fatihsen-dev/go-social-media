@@ -8,11 +8,8 @@ export default function Navbar() {
       <nav className={styles.Navbar}>
          <NextLogo className={styles} />
          <ul className={styles.Menu}>
-            <li>
-               <Link href='/explore'>Explore</Link>
-            </li>
-            <li>
-               <Link href='/friends'>Friends</Link>
+            <li className={styles.CreatePostBtn}>
+               <Link href='/create'>Create A Post</Link>
             </li>
             <li>
                <Link href='/profile'>Profile</Link>
