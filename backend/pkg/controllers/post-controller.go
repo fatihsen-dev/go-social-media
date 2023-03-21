@@ -28,7 +28,7 @@ func CreatePost(c *gin.Context) {
 	type Post struct {
 		Title             string     `validate:"required,min=10,max=40"`
 		Subtitle          string     `validate:"required,min=15,max=80"`
-		Description       string     `validate:"required,min=100,max=600"`
+		Description       string     `validate:"required,min=100,max=700"`
 	}
 
 	id, exists := c.Get("id")
@@ -106,44 +106,49 @@ func UpdatePost(c *gin.Context){
 		return
 	}
 
-	var input models.Post
-	if err := c.ShouldBindJSON(&input); err != nil {
-		if err.Error() == "EOF" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Request body cannot be empty"})
+	y, ok := userId.(float64)
+	if ok {
+		var input models.Post
+		if err := c.ShouldBindJSON(&input); err != nil {
+			if err.Error() == "EOF" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Request body cannot be empty"})
+				return
+			}
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		return
-  	}
-	var dbPost models.Post
-	if result := config.GetDB().Where("id = ?", id).First(&dbPost); result.Error == nil {
-		if userId == dbPost.Owner {
-			dbPost.ID = uint(id)
-			if len(input.Title) > 9 && len(input.Title) < 41  {
-				dbPost.Title = input.Title
-				config.GetDB().Save(&dbPost)
-			}
-			if len(input.Subtitle) > 14 && len(input.Subtitle) < 81  {
-				dbPost.Subtitle = input.Subtitle
-				config.GetDB().Save(&dbPost)
-			}
-			if len(input.Description) > 99 && len(input.Description) < 601  {
-				dbPost.Description = input.Description
-				config.GetDB().Save(&dbPost)
-			}
-			if result := config.GetDB().Where("id = ?", id).First(&dbPost); result.Error == nil {
-				c.JSON(http.StatusOK, result.Value)
-				return
+		var dbPost models.Post
+		if result := config.GetDB().Where("id = ?", id).First(&dbPost); result.Error == nil {
+			if uint(y) == dbPost.Owner {
+				dbPost.ID = uint(id)
+				if len(input.Title) > 9 && len(input.Title) < 41  {
+					dbPost.Title = input.Title
+					config.GetDB().Save(&dbPost)
+				}
+				if len(input.Subtitle) > 14 && len(input.Subtitle) < 81  {
+					dbPost.Subtitle = input.Subtitle
+					config.GetDB().Save(&dbPost)
+				}
+				if len(input.Description) > 99 && len(input.Description) < 601  {
+					dbPost.Description = input.Description
+					config.GetDB().Save(&dbPost)
+				}
+				if result := config.GetDB().Where("id = ?", id).First(&dbPost); result.Error == nil {
+					c.JSON(http.StatusOK, result.Value)
+					return
+				}else{
+					c.JSON(http.StatusBadRequest, gin.H{"error":"Post update error"})
+					return
+				}
 			}else{
-				c.JSON(http.StatusBadRequest, gin.H{"error":"Post update error"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error":"You are not post owner"})
 				return
 			}
-		}else{
-			c.JSON(http.StatusUnauthorized, gin.H{"error":"You are not post owner"})
-			return
 		}
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Post not found"})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Post update error"})
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"error":"Post not found"})
 }
 
 func DeletePost(c *gin.Context){
