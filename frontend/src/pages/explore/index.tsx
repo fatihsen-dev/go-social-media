@@ -1,8 +1,8 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Head from "next/head";
-import styles from "./Exxplore.module.scss";
+import styles from "./Explore.module.scss";
 
-const Post = () => {
+const Explore = () => {
    return (
       <>
          <Head>
@@ -17,4 +17,4 @@ const Post = () => {
    );
 };
 
-export default Post;
+export default Explore;
