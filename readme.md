@@ -1,5 +1,7 @@
 # Golang FullStack social media app project
 
+The frontend of the application is developed using Next.js, which is a React-based framework used to create high-performance web applications. The backend is built using Golang and the Gin Gonic framework, which provides a fast and efficient way to build RESTful APIs.
+
 ## Backend (Golang)
 
 ### [Gin](https://github.com/gin-gonic/gin) -> Golang Web Framework
