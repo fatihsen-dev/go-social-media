@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"net/http"
 	"io"
+	"net/http"
 )
 
 func ParseBody(r *http.Request, x interface{}) {

@@ -8,14 +8,14 @@ import (
 
 var DB *gorm.DB
 
-func Connect(){
-	d,err := gorm.Open("mysql",utils.GetEnvVariable("DB_URL"))
+func Connect() {
+	d, err := gorm.Open("mysql", utils.GetEnvVariable("DB_URL"))
 	if err != nil {
 		panic(err)
 	}
 	DB = d
 }
 
-func GetDB() *gorm.DB{
+func GetDB() *gorm.DB {
 	return DB
 }

@@ -6,20 +6,20 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-type GenerateJWTData struct{
-	ID 		uint
-	Email 	string
-   Date  	time.Time
+type GenerateJWTData struct {
+	ID    uint
+	Email string
+	Date  time.Time
 }
 
 func GenerateJWT(data GenerateJWTData) (string, error) {
 
-    mySigningKey := []byte(GetEnvVariable("JWT_SECRET_KEY"))
+	mySigningKey := []byte(GetEnvVariable("JWT_SECRET_KEY"))
 
-    claims := jwt.MapClaims{
-		"id":     data.ID,
-		"email":  data.Email,
-		"date":   time.Now().UTC(),
+	claims := jwt.MapClaims{
+		"id":    data.ID,
+		"email": data.Email,
+		"date":  time.Now().UTC(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -28,5 +28,5 @@ func GenerateJWT(data GenerateJWTData) (string, error) {
 		return "", err
 	}
 
-    return tokenString, nil
+	return tokenString, nil
 }
